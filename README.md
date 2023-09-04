@@ -17,7 +17,13 @@ This project is still being brainstormed. Below AWS services are still under con
 - AWS Glue 
 - AWS Athena
 - AWS Redshift
-- AWS Lambda (Python, pandas, Hugging Face [j-hartmann/emotion-english-distilroberta-base](https://huggingface.co/j-hartmann/emotion-english-distilroberta-base) or [cardiffnlp/twitter-roberta-large-2022-154m](https://huggingface.co/cardiffnlp/twitter-roberta-large-2022-154m), Flask)
+- AWS Lambda 
+    - Python 
+    - pandas
+    - Hugging Face 
+        - [j-hartmann/emotion-english-distilroberta-base](https://huggingface.co/j-hartmann/emotion-english-distilroberta-base) 
+        - [cardiffnlp/twitter-roberta-large-2022-154m](https://huggingface.co/cardiffnlp/twitter-roberta-large-2022-154m)
+    - Flask
 - Terraform as Infrastructure-as-Code (IaC) tool to set up Cloud environment
 ## Data Pipeline Architecture
 TBD
