@@ -125,12 +125,13 @@ if __name__ == "__main__":
 
     load_dotenv()
     # davidj_api
-
+    # Get environment variables from the env file
     CLIENT_ID = os.getenv("REDDIT_CLIENT_ID")
     SECRET_KEY = os.getenv("REDDIT_SECRET_KEY")
     USER_NAME = os.getenv("REDDIT_USER_NAME")
     PASSWORD = os.getenv("REDDIT_PASSWORD")
 
+    # Get API token to qualify for API data extraction
     client_auth = requests.auth.HTTPBasicAuth(CLIENT_ID, SECRET_KEY)
     post_data = {
         "grant_type": "password",
@@ -145,17 +146,24 @@ if __name__ == "__main__":
     ACCESS_TOKEN = response.json()['access_token']
     headers['Authorization'] = f'bearer {ACCESS_TOKEN}'
     
+    # If Reddit API access passes, get top 100 posts minus the memes
     if response.status_code == 200:
-    
+        
+        # -flair%3AMeme%20-flair%3AShitpost (No Meme posts) and restrict_sr=on (restrict search to this subreddit)
+        # include_over_18=on (over_18 posts OK) and sort=relevance&t=day (sort by relevance and time less than a day)
         posts_response = requests.get(
         f"https://oauth.reddit.com/r/wallstreetbets/search?q=-flair%3AMeme%20-flair%3AShitpost&restrict_sr=on&include_over_18=on&sort=relevance&t=day",
         headers=headers, 
         params={'limit': '100', 'raw_json':'1'})
         
+        # Parse through Reddit posts and return a list of dictionary of Reddit posts
         reddit_posts = extract_reddit_posts(posts_response.json()['data']['children'])
-        total_sum_reddit_posts = len(reddit_posts)
+        total_sum_reddit_posts = len(reddit_posts) # Get total post numbers
+
         data = []
         total_sum_comments = 0
+        
+        # Iterate through the Reddit posts and extract their comments and replies to comments
         for reddit_post in reddit_posts:
             ID = reddit_post['id']
             comments_response = requests.get(
@@ -164,20 +172,24 @@ if __name__ == "__main__":
                 params={'limit': '100', 'raw_json':'1'},
             )
 
+            # i == 0 is the main post; i == 1 is the comments and replies
             for i in range(len(comments_response.json())):
-
-                # if i = 0, it is post; if i = 1, it is comments of post            
+           
                 for detail in comments_response.json()[i]['data']['children']:
                     
+                    # Get post detail, type of post, and post id
                     if i == 0:
                         post_detail, post_link_flair_text, post_id = extract_reddit_commentpost(detail)
+                        # Add to the data list
                         data.extend(post_detail)
 
                     else:
+                        # Get comments and replies for the type of post and post id
                         comments_data = extract_reddit_comments(detail['data'], post_link_flair_text, post_id)
+                        # Add to the data list
                         data.extend(comments_data)
                         
-                        total_sum_comments += len(comments_data)
+                        total_sum_comments += len(comments_data) # Get total number of replies and comments in a post
                     
     print("total_reddit_posts:", total_sum_reddit_posts)
     print("total_reddit_comments:", total_sum_comments)
