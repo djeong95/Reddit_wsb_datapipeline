@@ -5,6 +5,16 @@ import pandas as pd
 from dotenv import load_dotenv
 
 def extract_reddit_posts(posts):
+    """
+    Extract fields from Reddit posts to loop through Reddit API comments. Filters for a score better than 5.
+
+    Parameters:
+    - posts (dict): The Reddit posts data in dictionary form. Typically includes fields like 'author', 'name','title',etc.
+    Returns:
+    - data (list): A list of dictionaries containing the extracted fields from each Reddit post that meets the criteria.
+    Example usage:
+    reddit_posts = extract_reddit_posts(posts_response.json()['data']['children'])
+    """
     data = []
     for post in posts:
         post_dict = {}
@@ -26,7 +36,18 @@ def extract_reddit_posts(posts):
     return data
 
 def extract_reddit_commentpost(post):
-    
+    """
+    Extract fields from Reddit posts to be used on extracting Reddit comments. Used with Reddit API comments.
+
+    Parameters:
+    - post (dict): The Reddit post data in dictionary form. Typically includes fields like 'author', 'name','title',etc.
+    Returns:
+    - data (list): A list of dictionaries containing the extracted fields from each Reddit post that meets the criteria.
+    - link_flair_text (str): Type of post in wallstreetsbets subreddit. Ex. 'DD', 'Discussion', 'Meme', 'YOLO'
+    - id (str): The id of the post used to extract Reddit comments
+    Example usage:
+    post_detail, post_link_flair_text, post_id = extract_reddit_commentpost(post)
+    """
     data = []
     post_dict = {}
     if post['data']['subreddit'] == 'wallstreetbets':
