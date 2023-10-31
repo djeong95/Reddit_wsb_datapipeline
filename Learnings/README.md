@@ -1,6 +1,30 @@
 # Learnings while constructing this data pipeline
 These are my notes taken to understand all the in's and out's of constructing data pipelines at a high level. 
 
+## Airflow (running locally without Docker)
+- Here is the [Youtube tutorial](https://www.youtube.com/watch?v=z7xyNOF8tak&list=PLwFJcsJ61oujAqYpMp1kdUBcPG0sE0QMT&index=2&ab_channel=coder2j) that guides you on how to install Airflow, create a Conda virtual environment, run commands such as:
+```bash
+# To create an environment with Anaconda:
+Conda create -n airflow python=3.9
+Conda activate airflow
+
+# To create an environment with Virtualenv, use this instead:
+$ pip install virtualenv
+$ python3 -m venv venv
+$ source venv/bin/activate
+
+# Install Apache Airflow as shown in the video
+
+# Then, run below commands to run Airflow locally
+export AIRFLOW_HOME=~/airflow
+airflow db init
+airflow users create --username admin --firstname firstname --lastname lastname --role Admin --email admin@admin.com
+airflow webserver -p 8080
+airflow scheduler
+```
+- Here is a link to [Apache Airflow documentations](https://airflow.apache.org/docs/apache-airflow/stable/start.html) on how to get started as well.
+    
+
 ## HyperText Transfer Protocol (HTTP) 
 
 HTTP has been the foundation for data communication for the World Wide Web (i.e. internet) since 1990. HTTP is a generic and stateless protocol which can be used for other purposes as well using extensions of its request methods, error codes, and headers.
@@ -33,3 +57,7 @@ Stateful architecture or application describes a structure that allows users to 
 https://www.tutorialspoint.com/http/http_overview.htm
 
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview#http_messages
+
+
+
+

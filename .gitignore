@@ -1,1 +1,10 @@
 .env
+*.ipynb*
+*access*
+*credential*
+wsb_posts*
+logs
+*pycache*
+config
+plugins
+utils_test.py

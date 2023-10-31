@@ -39,3 +39,15 @@ TBD
 https://www.youtube.com/watch?v=FdjVoOf9HN4&t=6s&ab_channel=JamesBriggs
 
 2. Fork this repo, and clone it to your local environment.
+
+```bash
+# Create REDDIT_WSB_DATAPIPELINE folder
+
+# Set directory to REDDIT_WSB_DATAPIPELINE
+docker-compose up -d
+
+docker ps # See if all items were fired up correctly
+
+# activate fernet key
+# save variables in webserver
+```
