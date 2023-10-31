@@ -31,7 +31,15 @@ TBD
 ## Data Dashboard
 TBD
 ## Future Improvements
-TBD
+
+#### Data Ingestion (API to S3)
+- Allow Airflow to use execution_date to pull data for dates not executed
+    - Reddit API either allows for Past 24 hours or Past week. Data pipeline must ingest data that are delayed
+- Get raw data to S3 and transform and decide to store transformed data in S3 or Redshift (AWS Lambda?)
+
+#### Data Storage (S3 to Redshift)
+
+
 ## Reproduce It Yourself
 
 1. Register to use the [Reddit API](https://www.reddit.com/prefs/apps) under *create application*. You will need the application client id and secret key to access the API by clicking "are you a developer? create an app...".
@@ -49,5 +57,5 @@ docker-compose up -d
 docker ps # See if all items were fired up correctly
 
 # activate fernet key
-# save variables in webserver
+# save sensitive variables in webserver
 ```
