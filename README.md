@@ -24,7 +24,8 @@ This project is still being brainstormed. Below AWS services are still under con
 - AWS CloudWatch
 - Terraform or Cloudformation as Infrastructure-as-Code (IaC) tool to set up Cloud environment
 ## Data Pipeline Architecture
-TBD
+<img width="700" alt="image" src="https://github.com/djeong95/Reddit_wsb_datapipeline/assets/102641321/296cd388-70a7-4ce1-921c-beb94fd6a912">
+
 
 ## Data Dashboard
 TBD
