@@ -10,21 +10,19 @@ This project uses the Reddit API to tap into the "wisdom of the crowd" and find 
 ## Technology Stack
 
 - Reddit API
-- Apache Airflow (execute twice a day)
+- Docker-compose (Run locally)
+- Apache Airflow (Execute twice a day)
 - AWS S3 (Simple Storage Service)
 
 This project is still being brainstormed. Below AWS services are still under consideration:
-- AWS Glue 
-- AWS Athena
 - AWS Redshift
 - AWS Lambda 
-    - Python 
-    - pandas
     - Hugging Face 
         - [j-hartmann/emotion-english-distilroberta-base](https://huggingface.co/j-hartmann/emotion-english-distilroberta-base) 
         - [cardiffnlp/twitter-roberta-large-2022-154m](https://huggingface.co/cardiffnlp/twitter-roberta-large-2022-154m)
-    - Flask
-- Terraform as Infrastructure-as-Code (IaC) tool to set up Cloud environment
+- AWS QuickSight
+- AWS CloudWatch
+- Terraform or Cloudformation as Infrastructure-as-Code (IaC) tool to set up Cloud environment
 ## Data Pipeline Architecture
 TBD
 
@@ -58,4 +56,19 @@ docker ps # See if all items were fired up correctly
 
 # activate fernet key
 # save sensitive variables in webserver
+```
+
+`AIRFLOW__CORE__FERNET_KEY: ${FERNET_KEY}`
+
+
+```python
+# # Use below code to generate Fernet key and save to env file
+# # to be referred in docker-compose file for data encryption
+from cryptography.fernet import Fernet
+fernet_key= Fernet.generate_key()
+print(fernet_key.decode())
+
+# Add the resulting fernet_key into your .env file as FERNET_KEY={YOUR_FERNET_KEY_HERE}
+# Add under 'environment' in docker-compose `AIRFLOW__CORE__FERNET_KEY: ${FERNET_KEY}`
+# docker-compose file will read from env file in your directory when docker-compose -d is executed
 ```
