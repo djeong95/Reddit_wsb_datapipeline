@@ -35,9 +35,10 @@ TBD
 - Allow Airflow to use execution_date to pull data for dates not executed
     - Reddit API either allows for Past 24 hours or Past week. Data pipeline must ingest data that are delayed
 - Get raw data to S3 and transform and decide to store transformed data in S3 or Redshift (AWS Lambda?)
+- Move docker-compose data ingestion to an EC2 instance that triggers based on schedule so data ingestion can occur outside of localhost
 
 #### Data Storage (S3 to Redshift)
-
+TBD
 
 ## Reproduce It Yourself
 
@@ -47,6 +48,9 @@ https://www.youtube.com/watch?v=FdjVoOf9HN4&t=6s&ab_channel=JamesBriggs
 
 2. Fork this repo, and clone it to your local environment.
 
+3. To create the docker-compose.yaml file from scratch,
+Download docker-compose example file
+Delete everything about Celery
 ```bash
 # Create REDDIT_WSB_DATAPIPELINE folder
 
