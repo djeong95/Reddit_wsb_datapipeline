@@ -13,9 +13,10 @@ This project uses the Reddit API to tap into the "wisdom of the crowd" and find 
 - Docker-compose (Run locally)
 - Apache Airflow (Execute twice a day)
 - AWS S3 (Simple Storage Service)
+- AWS Redshift
 
 This project is still being brainstormed. Below AWS services are still under consideration:
-- AWS Redshift
+
 - AWS Lambda 
     - Hugging Face 
         - [j-hartmann/emotion-english-distilroberta-base](https://huggingface.co/j-hartmann/emotion-english-distilroberta-base) 
@@ -24,9 +25,21 @@ This project is still being brainstormed. Below AWS services are still under con
 - AWS CloudWatch
 - Terraform or Cloudformation as Infrastructure-as-Code (IaC) tool to set up Cloud environment
 ## Data Pipeline Architecture
-<img width="705" alt="image" src="https://github.com/djeong95/Reddit_wsb_datapipeline/assets/102641321/681860de-739b-475c-bc13-4e3b4ebded90">
+<img width="705" alt="image" src="https://github.com/djeong95/Reddit_wsb_datapipeline/assets/102641321/035e947e-e2b4-417b-8e3c-25624b8fce01">
 
-
+## Final DataFrame Data Structure:
+| Column | Data Type | Context |
+| --- | --- | --- |
+| author | String (object) | author of the post |
+| user_id | String (object) | user_id who commented |
+| created_utc | int64 | Unix timestamp of comment/ post|
+| body | String (object) | body of text |
+| score | int64 | upvotes |
+| link_flair_text | String (object) | type of post, like "Discussion", "News", "Gain", "DD" |
+| post_link_id | String (object) | post_id |
+| created_utc_formatted | String (object) | Date in UTC format |
+| created_pst_formatted | String (object) | Date in PST format |
+| type | String (object) | comment or post |
 
 ## Data Dashboard
 TBD
