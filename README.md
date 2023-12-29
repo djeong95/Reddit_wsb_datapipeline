@@ -81,7 +81,8 @@ TBD
 - Move docker-compose data ingestion to an EC2 instance that triggers based on schedule so data ingestion can occur outside of localhost
 
 #### Data Storage (S3 to Redshift)
-TBD
+- Redshift is a relational database management system so `body` column has to be limited with `VARCHAR(1000)`
+    - Is DynamoDB a better service for this?
 
 ## Reproduce It Yourself
 
