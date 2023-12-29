@@ -9,6 +9,10 @@ import utils # from utils.py
 from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.python import PythonOperator
+from airflow.providers.amazon.aws.operators.redshift_cluster import RedshiftResumeClusterOperator
+from airflow.providers.amazon.aws.sensors.redshift_cluster import RedshiftClusterSensor
+from airflow.providers.amazon.aws.transfers.s3_to_redshift import S3ToRedshiftOperator
+from airflow.providers.amazon.aws.operators.redshift_cluster import RedshiftPauseClusterOperator
 
 # # Use below code to generate Fernet key and save to env file
 # # to be referred in docker-compose file for data encryption
@@ -81,4 +85,43 @@ with DAG(
         }
     )
 
-    fetch_data_to_file >> [load_post_comm_file_to_s3, load_post_file_to_s3]
+    resume_redshift = RedshiftResumeClusterOperator(
+        task_id = "resume_redshift_cluster",
+        cluster_identifier = "wsb-redshift-cluster-uswest1-davidjeongaws-dev0",
+        aws_conn_id= "wsb_conn_id"
+    )
+    
+    cluster_sensor = RedshiftClusterSensor(
+        task_id = "wait_for_cluster_to_be_available",
+        cluster_identifier= "wsb-redshift-cluster-uswest1-davidjeongaws-dev0",
+        target_status= "available",
+        aws_conn_id= "wsb_conn_id"
+    )
+
+    load_jsonfile_to_redshift_from_s3 = S3ToRedshiftOperator(
+        task_id="load_json_file_to_redshift_from_s3",
+        schema="fct",
+        table="wsb_file",
+        s3_bucket=BUCKET_NAME,
+        s3_key=f"{FILE_TYPE}/{POST_COMMENTS_DIR_PATH}/{POST_COMMENTS_DIR_PATH}-{TODAY.year}-{TODAY.month}-{TODAY.day}-{TODAY.hour}.json",
+        copy_options=["json 'auto'"],
+        redshift_conn_id="redshift_conn_idd",
+        aws_conn_id="wsb_conn_id",
+        method='UPSERT',
+        upsert_keys=["created_utc"]
+    )
+    
+    pause_redshift = RedshiftPauseClusterOperator(
+        task_id = "pause_redshift_cluster",
+        cluster_identifier = "wsb-redshift-cluster-uswest1-davidjeongaws-dev0",
+        aws_conn_id = "wsb_conn_id"
+    )
+
+    (
+    fetch_data_to_file 
+    >> [load_post_comm_file_to_s3, load_post_file_to_s3] 
+    >> resume_redshift 
+    >> cluster_sensor
+    >> load_jsonfile_to_redshift_from_s3
+    >> pause_redshift
+    )

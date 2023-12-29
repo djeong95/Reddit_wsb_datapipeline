@@ -9,10 +9,12 @@ from datetime import datetime, timedelta
 from airflow.hooks.S3_hook import S3Hook
 
 
+
 def convert_timestamp_to_timezone(unix_timestamp, target_timezone):
     utc_time = datetime.fromtimestamp(unix_timestamp, tz=pytz.UTC) # Convert to UTC timezone first
     target_time = utc_time.astimezone(pytz.timezone(target_timezone))
-    return target_time
+
+    return f"{target_time}"
 
 def extract_reddit_posts(posts):
     """
@@ -67,7 +69,9 @@ def extract_reddit_commentpost(post):
         post_dict['author'] = post['data']['author']
         post_dict['id'] = post['data']['name']
         post_dict['created_utc'] = post['data']['created_utc']
-        post_dict['body']= post['data']['title']
+
+        post_dict['body']= post['data']['title'][:1000]
+        
         post_dict['score']= post['data']['score']
         post_dict['link_flair_text'] = post['data']['link_flair_text']
         post_dict['post_link_id'] = post['data']['id']
@@ -75,6 +79,7 @@ def extract_reddit_commentpost(post):
         post_dict['created_pst_formatted']= convert_timestamp_to_timezone(post['data']['created_utc'], "US/Pacific")
 
     data.append(post_dict)
+
     return data, post['data']['link_flair_text'], post['data']['id']
 
 def extract_reddit_comments(data, link_flair_text, name, fields=('author' ,'id', 'created_utc', 'body', 'score')):
@@ -101,7 +106,8 @@ def extract_reddit_comments(data, link_flair_text, name, fields=('author' ,'id',
 
         try:
             # Create a dictionary for each comment using the specified fields
-            result = {field: data[field] for field in fields}   
+            # result = {field: (data[field][:1000] if field == 'body' and len(data[field]) > 1000 else data[field]) for field in fields}
+            result = {field: (data[field][:1000] if field == 'body' else data[field]) for field in fields}
 
             # Append the result to the results list if it is unique and its score is greater than 4
             if (result not in results) & (result['score'] > 4):
@@ -214,7 +220,15 @@ def save_data_locally(reddit_posts: json, reddit_posts_comments: json, time_var:
         file_path = Path(f"{file_type}/{dir_path}/{dir_path}-{time_var.year}-{time_var.month}-{time_var.day}-{time_var.hour}.json")
 
         with open(file_path, 'w') as f:
-            json.dump(data, f, default=datetime_serializer)
+            for item in data:
+                # Convert the dictionary to a JSON string
+                # json_string = json.dumps(item, indent=9, default=datetime_serializer)
+                json_string = json.dumps(item, indent=9)
+                # Write the JSON string to the file
+                f.write(json_string)
+                f.write("\n")  # Add two newlines for separation
+            
+            # json.dump(data, f, default=datetime_serializer)
         post_paths.append(str(file_path))
 
     return post_paths
@@ -348,7 +362,7 @@ def _local_file_to_s3(filepath: str, bucket_name: str, key: str, remove_local: b
     
     for post_path in post_paths:
     
-        s3_hook = S3Hook(aws_conn_id="wsb_s3_conn_id")
+        s3_hook = S3Hook(aws_conn_id="wsb_conn_id")
         s3_hook.load_file(filename=post_path, bucket_name=bucket_name, key=post_path, replace=True)
     
     if remove_local:
