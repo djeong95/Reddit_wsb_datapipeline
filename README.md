@@ -27,19 +27,48 @@ This project is still being brainstormed. Below AWS services are still under con
 ## Data Pipeline Architecture
 <img width="705" alt="image" src="https://github.com/djeong95/Reddit_wsb_datapipeline/assets/102641321/035e947e-e2b4-417b-8e3c-25624b8fce01">
 
-## Final DataFrame Data Structure:
+## Data Structures:
+Staging Table before HuggingFace:
 | Column | Data Type | Context |
 | --- | --- | --- |
-| author | String (object) | author of the post |
-| user_id | String (object) | user_id who commented |
+| author | String | username of comment or post  |
+| id | String | randomly generated comment_id, regardless of the username; post_id start with "t3_" |
 | created_utc | int64 | Unix timestamp of comment/ post|
-| body | String (object) | body of text |
+| body | String | body of text |
 | score | int64 | upvotes |
-| link_flair_text | String (object) | type of post, like "Discussion", "News", "Gain", "DD" |
-| post_link_id | String (object) | post_id |
-| created_utc_formatted | String (object) | Date in UTC format |
-| created_pst_formatted | String (object) | Date in PST format |
-| type | String (object) | comment or post |
+| link_flair_text | String | type of post, like "Discussion", "News", "Gain", "DD" |
+| post_link_id | String | post_id for linking comments to post |
+| created_utc_formatted | timestamp | Date in UTC format |
+| created_pst_formatted | timestamp | Date in PST format |
+| type | String | comment or post |
+
+User Mention Table:
+| Column | Data Type | Context |
+| --- | --- | --- |
+| post_link_id | String | post_id |
+| id | String | comment_id or post_id |
+| Ticker mentioned | Array | Stock ticker/symbol |
+
+Ticker Mentions Table (Aggregate Table from post and comment):
+| Column | Data Type | Context |
+| --- | --- | --- |
+| Ticker | String | Stock ticker/symbol |
+| Number of Mentions | int64 | Number of times ticker was mentioned |
+
+User Sentiment Table:
+| Column | Data Type | Context |
+| --- | --- | --- |
+| post_link_id | String | post_id |
+| id | String | comment_id or post_id |
+| Ticker mentioned | String | Stock ticker/symbol |
+| Sentiment Score | float64 | Sentiment Score |
+
+Sentimentality Score Table (Aggregate Table from post and comment):
+| Column | Data Type | Context |
+| --- | --- | --- |
+| Ticker | String | Stock ticker/symbol |
+| Sentiment Score | float64 | Aggregate score for sentiment |
+
 
 ## Data Dashboard
 TBD
